@@ -103,19 +103,27 @@ app.post('/api/:collection', upload.single('image'), async (req, res) => {
 });
 
 //GET
+const VALID_TABLES = ['designs', 'projects'];
+
 app.get('/api/:collection', async (req, res) => {
   try {
-    const table = getTable(req.params.collection);
-
+    const collection = req.params.collection;
+    
+    // Validar que sea una tabla permitida
+    if (!VALID_TABLES.includes(collection)) {
+      return res.status(400).json({ error: 'Colección no válida' });
+    }
+    
     const { rows } = await pool.query(`
       SELECT id, img_url, type, ubication
-      FROM ${table}
+      FROM ${collection}
       ORDER BY created_at DESC
     `);
-
+    
     res.json(rows);
-
+    
   } catch (error) {
+    console.error('Error:', error);
     res.status(500).json({ error: 'Error al obtener datos' });
   }
 });
