@@ -61,7 +61,8 @@ try {
     },
     max: 20,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 5000, // Reducido para fallar rápido si hay problema
+    connectionTimeoutMillis: 5000,
+    host: process.env.DB_HOST,
   });
   console.log('✅ Pool de base de datos configurado');
 } catch (error) {
