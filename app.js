@@ -30,11 +30,22 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
 
 const isProduction = process.env.NODE_ENV === "production";
 
+// Configuración mejorada
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: isProduction
-    ? { rejectUnauthorized: false }
-    : false,
+  ssl: {
+    rejectUnauthorized: false,
+    require: true
+  },
+  // Configuración adicional para Supabase
+  max: 20, // máximo de conexiones en el pool
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+});
+
+// Verificar conexión al iniciar
+pool.on('error', (err) => {
+  console.error('Error inesperado en pool de base de datos:', err);
 });
 
 
